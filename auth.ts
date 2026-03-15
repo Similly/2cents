@@ -46,6 +46,9 @@ export const {handlers, auth, signIn, signOut} = NextAuth({
       if (user) {
         token.role = user.role;
       }
+      if (!token.role) {
+        token.role = "ADMIN";
+      }
       return token;
     },
     session({session, token}) {
