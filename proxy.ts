@@ -22,11 +22,24 @@ function withLocalePath(locale: string, path: string) {
   return locale === routing.defaultLocale ? path : `/${locale}${path}`;
 }
 
+async function readAuthToken(req: NextRequest) {
+  const forwardedProto = req.headers.get("x-forwarded-proto");
+  const isSecure = req.nextUrl.protocol === "https:" || forwardedProto === "https";
+  const secret = process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET;
+  if (!secret) return null;
+
+  return getToken({
+    req,
+    secret,
+    secureCookie: isSecure,
+  });
+}
+
 export default async function middleware(req: NextRequest) {
   const pathname = req.nextUrl.pathname;
 
   if (isProtectedPath(pathname)) {
-    const token = await getToken({req, secret: process.env.NEXTAUTH_SECRET});
+    const token = await readAuthToken(req);
 
     if (!token) {
       const locale = extractLocale(pathname);
@@ -37,7 +50,7 @@ export default async function middleware(req: NextRequest) {
   }
 
   if (isLoginPath(pathname)) {
-    const token = await getToken({req, secret: process.env.NEXTAUTH_SECRET});
+    const token = await readAuthToken(req);
     if (token) {
       const locale = extractLocale(pathname);
       return NextResponse.redirect(new URL(withLocalePath(locale, "/editor"), req.url));
