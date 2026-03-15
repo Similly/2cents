@@ -41,11 +41,16 @@ export default async function LoginPage({
           action={async (formData) => {
             "use server";
             try {
+              const email = String(formData.get("email") || "").trim().toLowerCase();
+              const password = String(formData.get("password") || "");
               await signIn("credentials", {
-                email: formData.get("email"),
-                password: formData.get("password"),
+                email,
+                password,
                 redirectTo: callbackPath,
               });
+              // Some deployments do not auto-redirect after successful credentials sign-in.
+              // Force navigation to the editor as a safe fallback.
+              redirect(callbackPath);
             } catch (error) {
               if (error instanceof AuthError) {
                 redirect(`${locale === "de" ? "" : `/${locale}`}/login?error=CredentialsSignin`);
