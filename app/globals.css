@@ -90,7 +90,13 @@ h6 {
 .prose-essay ul + p,
 .prose-essay ol + p,
 .prose-essay blockquote + p {
-  margin-top: 1rem;
+  margin-top: 1.1rem;
+}
+
+.prose-essay br[data-spacer="true"] {
+  display: block;
+  content: "";
+  margin-top: 1.1rem;
 }
 
 .prose-essay p,

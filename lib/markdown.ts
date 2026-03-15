@@ -1,6 +1,7 @@
 import {marked} from "marked";
 import sanitizeHtml from "sanitize-html";
 import {toMediaPath} from "@/lib/media";
+import {withVisibleBlankLines} from "@/lib/markdown-spacing";
 
 marked.setOptions({
   gfm: true,
@@ -38,6 +39,7 @@ const sanitizeConfig: sanitizeHtml.IOptions = {
   allowedAttributes: {
     a: ["href", "name", "target", "rel"],
     img: ["src", "alt", "title", "loading"],
+    br: ["data-spacer"],
     th: ["colspan", "rowspan", "align"],
     td: ["colspan", "rowspan", "align"],
     code: ["class"],
@@ -57,7 +59,7 @@ const sanitizeConfig: sanitizeHtml.IOptions = {
 };
 
 export function markdownToHtml(markdown: string) {
-  const parsed = marked.parse(markdown || "");
+  const parsed = marked.parse(withVisibleBlankLines(markdown));
   const rawHtml = typeof parsed === "string" ? parsed : "";
   return sanitizeHtml(rawHtml, sanitizeConfig);
 }

@@ -9,6 +9,7 @@ import {Input} from "@/components/ui/input";
 import {Textarea} from "@/components/ui/textarea";
 import {Link, useRouter} from "@/i18n/navigation";
 import {rewriteLegacyUploadPathsInHtml, toMediaPath} from "@/lib/media";
+import {withVisibleBlankLines} from "@/lib/markdown-spacing";
 
 type Option = {id: string; name: string};
 
@@ -56,7 +57,7 @@ export function PostEditor({id, locale, initial, categories}: PostEditorProps) {
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
   const previewHtml = useMemo(() => {
-    const parsed = marked.parse(contentMarkdown || "");
+    const parsed = marked.parse(withVisibleBlankLines(contentMarkdown));
     const html = typeof parsed === "string" ? parsed : "";
     return rewriteLegacyUploadPathsInHtml(html);
   }, [contentMarkdown]);
