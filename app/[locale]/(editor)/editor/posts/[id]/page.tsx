@@ -1,9 +1,8 @@
 import {notFound} from "next/navigation";
-import type {JSONContent} from "@tiptap/core";
 import {PostEditor} from "@/components/editor/post-editor";
 import {getEditorMeta, getPostForEditor} from "@/lib/data";
-import {getDefaultContentJson} from "@/lib/editor";
 import {requireAdmin} from "@/lib/auth-utils";
+import {storedContentToMarkdown} from "@/lib/markdown";
 
 export const dynamic = "force-dynamic";
 
@@ -12,8 +11,8 @@ export default async function EditPostPage({
 }: {
   params: Promise<{locale: "de" | "en"; id: string}>;
 }) {
-  await requireAdmin();
   const {id, locale} = await params;
+  await requireAdmin(locale);
 
   const [post, meta] = await Promise.all([getPostForEditor(id, locale), getEditorMeta()]);
 
@@ -30,7 +29,10 @@ export default async function EditPostPage({
           title: translation?.title || "",
           slug: translation?.slug || "",
           excerpt: translation?.excerpt || "",
-          contentJson: (translation?.contentJson as JSONContent) || getDefaultContentJson(),
+          contentMarkdown: storedContentToMarkdown(
+            translation?.contentJson,
+            translation?.contentHtml
+          ),
           categoryId: post.categoryId,
           tags: post.tags.map((postTag) => postTag.tag.slug),
           coverImage: post.coverImage,

@@ -6,6 +6,8 @@ services:
       POSTGRES_DB: twocents
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
+    ports:
+      - "${POSTGRES_HOST_PORT:-5433}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -21,6 +23,9 @@ services:
     restart: unless-stopped
     env_file:
       - .env
+    environment:
+      DATABASE_URL: ${DOCKER_DATABASE_URL:-postgresql://postgres:postgres@postgres:5432/twocents?schema=public}
+      UPLOAD_DIR: ${DOCKER_UPLOAD_DIR:-/app/public/uploads}
     depends_on:
       postgres:
         condition: service_healthy

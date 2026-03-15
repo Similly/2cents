@@ -104,12 +104,12 @@ export const getRelatedPosts = cache(async (locale: string, postId: string, cate
   });
 });
 
-export const getSiteSettings = cache(async (locale: string) => {
+export async function getSiteSettings(locale: string) {
   const settings = await prisma.siteSettings.findUnique({where: {locale}});
   if (settings) return settings;
 
   return prisma.siteSettings.findFirst({where: {locale: "de"}});
-});
+}
 
 export const getEditorPosts = cache(async (locale: string) => {
   return prisma.post.findMany({

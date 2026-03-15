@@ -1,6 +1,6 @@
 "use client";
 
-import {Menu, PencilLine, Search} from "lucide-react";
+import {Archive, Home, Menu, PencilLine, Search, UserRound} from "lucide-react";
 import {LucideIcon} from "lucide-react";
 import {useTranslations} from "next-intl";
 import {useState} from "react";
@@ -10,9 +10,9 @@ import {Button} from "@/components/ui/button";
 import {cn} from "@/lib/utils";
 
 const items: Array<{href: "/" | "/archiv" | "/about" | "/editor"; key: "home" | "archive" | "about" | "write"; icon?: LucideIcon}> = [
-  {href: "/", key: "home"},
-  {href: "/archiv", key: "archive"},
-  {href: "/about", key: "about"},
+  {href: "/", key: "home", icon: Home},
+  {href: "/archiv", key: "archive", icon: Archive},
+  {href: "/about", key: "about", icon: UserRound},
   {href: "/editor", key: "write", icon: PencilLine},
 ];
 
@@ -43,18 +43,26 @@ function NavLinks({onNavigate}: {onNavigate?: () => void}) {
   );
 }
 
-export function Sidebar() {
+export function Sidebar({
+  siteName,
+  tagline,
+}: {
+  siteName?: string;
+  tagline?: string;
+}) {
   const t = useTranslations();
   const [open, setOpen] = useState(false);
+  const effectiveSiteName = siteName || t("site.name");
+  const effectiveTagline = tagline || t("site.tagline");
 
   return (
     <>
       <aside className="hidden h-screen w-80 shrink-0 border-r border-site-border bg-site-panel px-6 py-6 lg:block lg:sticky lg:top-0">
         <div className="mb-10">
           <Link className="block text-5xl leading-none text-site-accent font-serif" href="/">
-            {t("site.name")}
+            {effectiveSiteName}
           </Link>
-          <p className="mt-1 text-sm text-site-muted">{t("site.tagline")}</p>
+          <p className="mt-1 text-sm text-site-muted">{effectiveTagline}</p>
         </div>
 
         <div className="relative mb-8">
@@ -68,7 +76,7 @@ export function Sidebar() {
       <div className="sticky top-0 z-40 border-b border-site-border bg-site-panel/90 px-4 py-3 backdrop-blur lg:hidden">
         <div className="flex items-center justify-between">
           <Link className="font-serif text-4xl leading-none text-site-accent" href="/">
-            {t("site.name")}
+            {effectiveSiteName}
           </Link>
           <Button onClick={() => setOpen((value) => !value)} size="icon" variant="ghost">
             <Menu className="h-5 w-5" />

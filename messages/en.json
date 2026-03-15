@@ -36,6 +36,7 @@
   "editor": {
     "title": "Editor",
     "overview": "Posts",
+    "settings": "Settings",
     "new": "New Essay",
     "draft": "Draft",
     "published": "Published",

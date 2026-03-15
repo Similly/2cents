@@ -1,4 +1,5 @@
 import {notFound} from "next/navigation";
+import Image from "next/image";
 import {getSiteSettings} from "@/lib/data";
 import {Separator} from "@/components/ui/separator";
 
@@ -11,16 +12,31 @@ export default async function AboutPage({params}: {params: Promise<{locale: stri
   if (!settings) notFound();
 
   const topics = settings.aboutTopics as string[];
+  const socialLinksRaw = (settings.socialLinks as Record<string, unknown> | null) ?? null;
+  const profileImage =
+    typeof socialLinksRaw?.profileImage === "string" ? socialLinksRaw.profileImage.trim() : "";
 
   return (
     <article className="mx-auto max-w-[720px] pb-16">
       <h1 className="text-7xl leading-none">{settings.aboutTitle}</h1>
 
-      <div className="mt-10 inline-flex rounded-3xl border border-site-border bg-gradient-to-br from-[#c7d6d5] via-[#f1efee] to-[#e9d2cc] p-4">
-        <div className="grid h-40 w-40 place-items-center rounded-2xl bg-site">
-          <span className="font-serif text-7xl text-site-ink">2c</span>
+      {profileImage && profileImage.startsWith("/") ? (
+        <div className="mt-10 inline-flex rounded-3xl border border-site-border bg-site-panel p-3">
+          <Image
+            alt={settings.siteName}
+            className="h-40 w-40 rounded-2xl object-cover"
+            height={160}
+            src={profileImage}
+            width={160}
+          />
         </div>
-      </div>
+      ) : (
+        <div className="mt-10 inline-flex rounded-3xl border border-site-border bg-gradient-to-br from-[#c7d6d5] via-[#f1efee] to-[#e9d2cc] p-4">
+          <div className="grid h-40 w-40 place-items-center rounded-2xl bg-site">
+            <span className="font-serif text-7xl text-site-ink">2c</span>
+          </div>
+        </div>
+      )}
 
       <div className="mt-10 space-y-6 text-[2.05rem] leading-[1.45] text-site-muted">
         <p className="text-site-ink">{settings.aboutIntro}</p>

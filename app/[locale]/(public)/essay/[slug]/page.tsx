@@ -1,5 +1,6 @@
 import {Clock3, LinkIcon, UserRound} from "lucide-react";
 import type {Metadata} from "next";
+import Image from "next/image";
 import {notFound} from "next/navigation";
 import {getTranslations} from "next-intl/server";
 import {PostCard} from "@/components/public/post-card";
@@ -79,6 +80,19 @@ export default async function EssayPage({
             {t("copyLink")}
           </Button>
         </div>
+
+        {translation.post.coverImage ? (
+          <div className="mt-8 overflow-hidden rounded-xl border border-site-border bg-site-panel">
+            <Image
+              alt={translation.post.coverAlt || translation.title}
+              className="h-auto w-full object-cover"
+              height={720}
+              priority
+              src={translation.post.coverImage}
+              width={1280}
+            />
+          </div>
+        ) : null}
       </header>
 
       <section className="prose-essay" dangerouslySetInnerHTML={{__html: translation.contentHtml}} />

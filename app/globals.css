@@ -50,19 +50,55 @@ h6 {
 .prose-essay h1,
 .prose-essay h2,
 .prose-essay h3,
-.prose-essay h4 {
+.prose-essay h4,
+.prose-essay h5,
+.prose-essay h6 {
   font-family: var(--font-serif), serif;
   margin-top: 1.7em;
   margin-bottom: 0.6em;
   line-height: 1.2;
 }
 
+.prose-essay h1 {
+  font-size: clamp(2.2rem, 4vw, 3.4rem);
+}
+
+.prose-essay h2 {
+  font-size: clamp(1.8rem, 3vw, 2.6rem);
+}
+
+.prose-essay h3 {
+  font-size: clamp(1.45rem, 2.4vw, 2rem);
+}
+
+.prose-essay h4 {
+  font-size: clamp(1.2rem, 2vw, 1.55rem);
+}
+
 .prose-essay p,
 .prose-essay li,
 .prose-essay blockquote {
   color: #3a3633;
-  font-size: 1.17rem;
-  line-height: 1.9;
+  font-size: 1.05rem;
+  line-height: 1.78;
+}
+
+.prose-essay ul,
+.prose-essay ol {
+  margin: 1rem 0 1.25rem;
+  padding-left: 1.45rem;
+}
+
+.prose-essay ul {
+  list-style: disc;
+}
+
+.prose-essay ol {
+  list-style: decimal;
+}
+
+.prose-essay li {
+  margin: 0.35rem 0;
 }
 
 .prose-essay a {

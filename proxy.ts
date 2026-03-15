@@ -18,6 +18,10 @@ function extractLocale(pathname: string) {
   return match?.[1] || routing.defaultLocale;
 }
 
+function withLocalePath(locale: string, path: string) {
+  return locale === routing.defaultLocale ? path : `/${locale}${path}`;
+}
+
 export default async function middleware(req: NextRequest) {
   const pathname = req.nextUrl.pathname;
 
@@ -26,7 +30,7 @@ export default async function middleware(req: NextRequest) {
 
     if (!token) {
       const locale = extractLocale(pathname);
-      const login = new URL(`/${locale}/login`, req.url);
+      const login = new URL(withLocalePath(locale, "/login"), req.url);
       login.searchParams.set("callbackUrl", req.nextUrl.pathname + req.nextUrl.search);
       return NextResponse.redirect(login);
     }
@@ -36,7 +40,7 @@ export default async function middleware(req: NextRequest) {
     const token = await getToken({req, secret: process.env.NEXTAUTH_SECRET});
     if (token) {
       const locale = extractLocale(pathname);
-      return NextResponse.redirect(new URL(`/${locale}/editor`, req.url));
+      return NextResponse.redirect(new URL(withLocalePath(locale, "/editor"), req.url));
     }
   }
 

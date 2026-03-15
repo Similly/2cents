@@ -6,12 +6,30 @@ import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 
 export default async function LoginPage({
+  params,
   searchParams,
 }: {
+  params: Promise<{locale: "de" | "en"}>;
   searchParams: Promise<{error?: string; callbackUrl?: string}>;
 }) {
+  const {locale} = await params;
   const resolvedSearch = await searchParams;
   const t = await getTranslations("login");
+  const defaultEditorPath = locale === "de" ? "/editor" : `/${locale}/editor`;
+
+  const callbackPath = (() => {
+    if (!resolvedSearch.callbackUrl) return defaultEditorPath;
+    try {
+      const parsed = new URL(resolvedSearch.callbackUrl, "http://localhost");
+      const path = `${parsed.pathname}${parsed.search}${parsed.hash}`;
+      if (!path.startsWith("/") || path.startsWith("//") || path.startsWith("/api/auth")) {
+        return defaultEditorPath;
+      }
+      return path;
+    } catch {
+      return defaultEditorPath;
+    }
+  })();
 
   return (
     <div className="grid min-h-screen place-items-center bg-site p-6">
@@ -26,11 +44,11 @@ export default async function LoginPage({
               await signIn("credentials", {
                 email: formData.get("email"),
                 password: formData.get("password"),
-                redirectTo: resolvedSearch.callbackUrl || "/editor",
+                redirectTo: callbackPath,
               });
             } catch (error) {
               if (error instanceof AuthError) {
-                redirect("/login?error=CredentialsSignin");
+                redirect(`${locale === "de" ? "" : `/${locale}`}/login?error=CredentialsSignin`);
               }
               throw error;
             }

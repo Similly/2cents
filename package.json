@@ -11,7 +11,8 @@
     "prisma:migrate": "prisma migrate deploy",
     "db:push": "prisma db push",
     "db:seed": "tsx prisma/seed.ts",
-    "db:studio": "prisma studio"
+    "db:studio": "prisma studio",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.1",
@@ -28,6 +29,7 @@
     "@radix-ui/react-slot": "^1.2.4",
     "@radix-ui/react-tabs": "^1.1.13",
     "@radix-ui/react-toast": "^1.2.15",
+    "@swc/helpers": "^0.5.19",
     "@tiptap/extension-code-block-lowlight": "^3.20.1",
     "@tiptap/extension-image": "^3.20.1",
     "@tiptap/extension-link": "^3.20.1",
@@ -47,6 +49,7 @@
     "date-fns": "^4.1.0",
     "lowlight": "^3.3.0",
     "lucide-react": "^0.577.0",
+    "marked": "^17.0.4",
     "next": "16.1.6",
     "next-auth": "^5.0.0-beta.30",
     "next-intl": "^4.8.3",
@@ -54,6 +57,7 @@
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "react-hook-form": "^7.71.2",
+    "sanitize-html": "^2.17.1",
     "slugify": "^1.6.8",
     "tailwind-merge": "^3.5.0",
     "zod": "^4.3.6"
@@ -63,13 +67,11 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/sanitize-html": "^2.16.1",
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
     "tailwindcss": "^4",
     "tsx": "^4.21.0",
     "typescript": "^5"
-  },
-  "prisma": {
-    "seed": "tsx prisma/seed.ts"
   }
 }

@@ -2,20 +2,31 @@ import {getTranslations} from "next-intl/server";
 import {PostCard} from "@/components/public/post-card";
 import {SiteFooter} from "@/components/public/site-footer";
 import {Link} from "@/i18n/navigation";
-import {getHomeData} from "@/lib/data";
+import {getHomeData, getSiteSettings} from "@/lib/data";
 
 export const dynamic = "force-dynamic";
 
 export default async function HomePage({params}: {params: Promise<{locale: string}>}) {
   const {locale} = await params;
   const t = await getTranslations("home");
-  const {featured, recent} = await getHomeData(locale);
+  const [homeData, settings] = await Promise.all([getHomeData(locale), getSiteSettings(locale)]);
+  const {featured, recent} = homeData;
+  const socialLinks = (settings?.socialLinks as Record<string, unknown> | null) ?? null;
+  const homeIntro =
+    typeof socialLinks?.homeIntro === "string" && socialLinks.homeIntro.trim().length > 0
+      ? socialLinks.homeIntro
+      : t("intro");
+  const links = {
+    twitter: typeof socialLinks?.twitter === "string" ? socialLinks.twitter : "",
+    email: typeof socialLinks?.email === "string" ? socialLinks.email : "",
+    website: typeof socialLinks?.website === "string" ? socialLinks.website : "",
+  };
 
   const featuredTranslation = featured?.translations[0];
 
   return (
     <div>
-      <p className="max-w-[42rem] text-[2rem] leading-[1.45] text-[#6a615d]">{t("intro")}</p>
+      <p className="max-w-[42rem] text-[2rem] leading-[1.45] text-[#6a615d]">{homeIntro}</p>
 
       {featured && featuredTranslation ? (
         <section className="mt-14">
@@ -60,7 +71,7 @@ export default async function HomePage({params}: {params: Promise<{locale: strin
         </div>
       </section>
 
-      <SiteFooter />
+      <SiteFooter links={links} />
     </div>
   );
 }

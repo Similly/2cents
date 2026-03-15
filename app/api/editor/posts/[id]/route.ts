@@ -1,7 +1,7 @@
 import {NextResponse} from "next/server";
 import {PostStatus, Prisma} from "@prisma/client";
 import {auth} from "@/auth";
-import {contentJsonToHtml, extractTextFromContent} from "@/lib/editor";
+import {markdownToHtml, markdownToPlainText} from "@/lib/markdown";
 import {prisma} from "@/lib/prisma";
 import {postUpsertSchema} from "@/lib/validators";
 import {estimateReadingMinutes, slugifyValue} from "@/lib/utils";
@@ -25,9 +25,10 @@ export async function PATCH(req: Request, {params}: {params: Promise<{id: string
   }
 
   const input = parsed.data;
-  const contentJson = input.contentJson as Prisma.InputJsonValue;
-  const readingTimeMin = estimateReadingMinutes(extractTextFromContent(input.contentJson));
-  const contentHtml = contentJsonToHtml(input.contentJson);
+  const markdown = input.contentMarkdown || "";
+  const contentJson = {type: "markdown", markdown} as Prisma.InputJsonValue;
+  const readingTimeMin = estimateReadingMinutes(markdownToPlainText(markdown));
+  const contentHtml = markdownToHtml(markdown);
   const tagSlugs = normalizeTags(input.tags);
 
   const tags = await Promise.all(
@@ -92,5 +93,23 @@ export async function PATCH(req: Request, {params}: {params: Promise<{id: string
     },
   });
 
-  return NextResponse.json({post});
+  return NextResponse.json({
+    post,
+    message: input.status === "PUBLISHED" ? "Essay veröffentlicht." : "Entwurf gespeichert.",
+  });
+}
+
+export async function DELETE(_req: Request, {params}: {params: Promise<{id: string}>}) {
+  const session = await auth();
+  if (!session?.user) {
+    return NextResponse.json({error: "Unauthorized"}, {status: 401});
+  }
+
+  const {id} = await params;
+
+  await prisma.post.delete({
+    where: {id},
+  });
+
+  return NextResponse.json({ok: true, message: "Essay gelöscht."});
 }

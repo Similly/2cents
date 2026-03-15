@@ -68,7 +68,11 @@ cp .env.example .env
 
 Important variables:
 
-- `DATABASE_URL`: Postgres connection string
+- `DATABASE_URL`: Postgres URL for host tools/dev (`localhost:5434`)
+- `DOCKER_DATABASE_URL`: Postgres URL used inside Docker app container (`postgres:5432`)
+- `POSTGRES_HOST_PORT`: host port for Docker Postgres (`5434`)
+- `UPLOAD_DIR`: upload path for host dev (`public/uploads`)
+- `DOCKER_UPLOAD_DIR`: upload path inside Docker app (`/app/public/uploads`)
 - `NEXTAUTH_SECRET`: long random secret
 - `NEXTAUTH_URL`: public app URL
 - `APP_BASE_URL`: canonical URL used for sitemap/rss/metadata
@@ -84,7 +88,7 @@ Important variables:
 npm install
 ```
 
-2. Run database (Docker)
+2. Run database (Docker, exposed on host port 5434 by default)
 
 ```bash
 docker compose up -d postgres
@@ -92,9 +96,18 @@ docker compose up -d postgres
 
 3. Run migrations + seed
 
+Run from your host machine:
+
 ```bash
-npx prisma migrate deploy
+npm run prisma:migrate
 npm run db:seed
+```
+
+Run from Docker app container:
+
+```bash
+docker compose run --rm app npm run prisma:migrate
+docker compose run --rm app npm run db:seed
 ```
 
 4. Start app

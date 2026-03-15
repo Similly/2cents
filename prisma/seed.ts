@@ -1,8 +1,31 @@
+import {existsSync, readFileSync} from "node:fs";
+import path from "node:path";
 import bcrypt from "bcryptjs";
 import {PrismaClient} from "@prisma/client";
 import type {JSONContent} from "@tiptap/core";
 import {contentJsonToHtml, extractTextFromContent} from "../lib/editor";
 import {estimateReadingMinutes, slugifyValue} from "../lib/utils";
+
+function loadDotEnvFile() {
+  if (process.env.DATABASE_URL) return;
+
+  const envPath = path.join(process.cwd(), ".env");
+  if (!existsSync(envPath)) return;
+
+  const raw = readFileSync(envPath, "utf8");
+  for (const line of raw.split(/\r?\n/)) {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith("#") || !trimmed.includes("=")) continue;
+
+    const [key, ...rest] = trimmed.split("=");
+    const value = rest.join("=").trim().replace(/^['"]|['"]$/g, "");
+    if (!process.env[key]) {
+      process.env[key] = value;
+    }
+  }
+}
+
+loadDotEnvFile();
 
 const prisma = new PrismaClient();
 
@@ -188,6 +211,9 @@ async function main() {
       aboutWhyBody:
         "Der Name kommt von 'my two cents' - ein bescheidener Beitrag zur Debatte. Diese Texte sind keine Wahrheiten in Stein, sondern Einladungen zum Weiterdenken.",
       socialLinks: {
+        profileImage: "",
+        homeIntro:
+          "Eine persönliche Sammlung von Essays über modernes Leben, Kreativität und die Kunst, aufmerksam zu bleiben.",
         twitter: "https://twitter.com/",
         email: "mailto:hello@example.com",
       },
@@ -195,24 +221,62 @@ async function main() {
   });
 
   for (const post of posts) {
-    const created = await prisma.post.create({
-      data: {
-        status: "PUBLISHED",
-        featured: Boolean(post.featured),
-        categoryId: categoryIds.get(post.category) || null,
-        publishedAt: new Date(post.publishedAt),
+    const slug = slugifyValue(post.title);
+    const existingTranslation = await prisma.postTranslation.findUnique({
+      where: {
+        locale_slug: {
+          locale: "de",
+          slug,
+        },
       },
+      select: {postId: true},
     });
+
+    const seededPost = existingTranslation
+      ? await prisma.post.update({
+          where: {id: existingTranslation.postId},
+          data: {
+            status: "PUBLISHED",
+            featured: Boolean(post.featured),
+            categoryId: categoryIds.get(post.category) || null,
+            publishedAt: new Date(post.publishedAt),
+          },
+        })
+      : await prisma.post.create({
+          data: {
+            status: "PUBLISHED",
+            featured: Boolean(post.featured),
+            categoryId: categoryIds.get(post.category) || null,
+            publishedAt: new Date(post.publishedAt),
+          },
+        });
+
+    const postId = seededPost.id;
 
     const text = extractTextFromContent(post.content);
     const readingTimeMin = estimateReadingMinutes(text);
 
-    await prisma.postTranslation.create({
-      data: {
-        postId: created.id,
+    await prisma.postTranslation.upsert({
+      where: {
+        locale_slug: {
+          locale: "de",
+          slug,
+        },
+      },
+      create: {
+        postId,
         locale: "de",
         title: post.title,
-        slug: slugifyValue(post.title),
+        slug,
+        excerpt: post.excerpt,
+        contentJson: post.content,
+        contentHtml: contentJsonToHtml(post.content),
+        seoTitle: post.title,
+        seoDescription: post.excerpt,
+        readingTimeMin,
+      },
+      update: {
+        title: post.title,
         excerpt: post.excerpt,
         contentJson: post.content,
         contentHtml: contentJsonToHtml(post.content),
@@ -221,6 +285,8 @@ async function main() {
         readingTimeMin,
       },
     });
+
+    await prisma.postTag.deleteMany({where: {postId}});
 
     for (const tagName of post.tags) {
       const slug = slugifyValue(tagName);
@@ -235,7 +301,7 @@ async function main() {
 
       await prisma.postTag.create({
         data: {
-          postId: created.id,
+          postId,
           tagId: tag.id,
         },
       });
