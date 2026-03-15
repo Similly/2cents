@@ -83,6 +83,23 @@ h6 {
   line-height: 1.78;
 }
 
+.prose-essay p + p,
+.prose-essay p + ul,
+.prose-essay p + ol,
+.prose-essay p + blockquote,
+.prose-essay ul + p,
+.prose-essay ol + p,
+.prose-essay blockquote + p {
+  margin-top: 1rem;
+}
+
+.prose-essay p,
+.prose-essay li {
+  text-align: justify;
+  text-justify: inter-word;
+  hyphens: auto;
+}
+
 .prose-essay ul,
 .prose-essay ol {
   margin: 1rem 0 1.25rem;

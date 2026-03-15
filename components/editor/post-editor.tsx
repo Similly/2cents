@@ -8,6 +8,7 @@ import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {Textarea} from "@/components/ui/textarea";
 import {Link, useRouter} from "@/i18n/navigation";
+import {rewriteLegacyUploadPathsInHtml, toMediaPath} from "@/lib/media";
 
 type Option = {id: string; name: string};
 
@@ -48,7 +49,7 @@ export function PostEditor({id, locale, initial, categories}: PostEditorProps) {
   const [contentMarkdown, setContentMarkdown] = useState(initial.contentMarkdown);
   const [tags, setTags] = useState(initial.tags.join(", "));
   const [categoryId, setCategoryId] = useState(initial.categoryId ?? "");
-  const [coverImage, setCoverImage] = useState(initial.coverImage ?? "");
+  const [coverImage, setCoverImage] = useState(toMediaPath(initial.coverImage));
   const [coverAlt, setCoverAlt] = useState(initial.coverAlt ?? "");
   const [featured, setFeatured] = useState(initial.featured);
 
@@ -56,7 +57,8 @@ export function PostEditor({id, locale, initial, categories}: PostEditorProps) {
 
   const previewHtml = useMemo(() => {
     const parsed = marked.parse(contentMarkdown || "");
-    return typeof parsed === "string" ? parsed : "";
+    const html = typeof parsed === "string" ? parsed : "";
+    return rewriteLegacyUploadPathsInHtml(html);
   }, [contentMarkdown]);
 
   const mutateMarkdown = useCallback((transform: (value: string, start: number, end: number) => {next: string; cursorStart?: number; cursorEnd?: number}) => {
@@ -160,9 +162,10 @@ export function PostEditor({id, locale, initial, categories}: PostEditorProps) {
       return;
     }
 
-    insertAtCursor(`\n![${uploaded.name}](${uploaded.path})\n`);
+    const mediaPath = toMediaPath(uploaded.path);
+    insertAtCursor(`\n![${uploaded.name}](${mediaPath})\n`);
     if (!coverImage) {
-      setCoverImage(uploaded.path);
+      setCoverImage(mediaPath);
       setCoverAlt(uploaded.name);
     }
 
@@ -179,7 +182,7 @@ export function PostEditor({id, locale, initial, categories}: PostEditorProps) {
       return;
     }
 
-    setCoverImage(uploaded.path);
+    setCoverImage(toMediaPath(uploaded.path));
     setCoverAlt((prev) => prev || uploaded.name);
     setDirty(true);
     setStatusText("Saved");
@@ -497,7 +500,7 @@ export function PostEditor({id, locale, initial, categories}: PostEditorProps) {
                     alt={coverAlt || "Cover image"}
                     className="max-h-48 rounded object-cover"
                     height={320}
-                    src={coverImage}
+                    src={toMediaPath(coverImage)}
                     unoptimized
                     width={900}
                   />

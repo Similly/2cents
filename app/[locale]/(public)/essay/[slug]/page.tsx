@@ -8,6 +8,7 @@ import {ReadingProgress} from "@/components/public/reading-progress";
 import {Badge} from "@/components/ui/badge";
 import {Button} from "@/components/ui/button";
 import {getPostBySlug, getRelatedPosts} from "@/lib/data";
+import {rewriteLegacyUploadPathsInHtml, toMediaPath} from "@/lib/media";
 import {absoluteUrl, formatDate} from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
@@ -35,7 +36,9 @@ export async function generateMetadata({
       description: translation.seoDescription || translation.excerpt,
       type: "article",
       publishedTime: translation.post.publishedAt?.toISOString(),
-      images: translation.post.coverImage ? [absoluteUrl(translation.post.coverImage)] : undefined,
+      images: translation.post.coverImage
+        ? [absoluteUrl(toMediaPath(translation.post.coverImage))]
+        : undefined,
     },
   };
 }
@@ -52,6 +55,7 @@ export default async function EssayPage({
   if (!translation) notFound();
 
   const related = await getRelatedPosts(locale, translation.post.id, translation.post.categoryId);
+  const renderedContentHtml = rewriteLegacyUploadPathsInHtml(translation.contentHtml);
 
   return (
     <article className="mx-auto max-w-[800px] pb-24">
@@ -88,7 +92,7 @@ export default async function EssayPage({
               className="h-auto w-full object-cover"
               height={720}
               priority
-              src={translation.post.coverImage}
+              src={toMediaPath(translation.post.coverImage)}
               unoptimized
               width={1280}
             />
@@ -96,7 +100,7 @@ export default async function EssayPage({
         ) : null}
       </header>
 
-      <section className="prose-essay" dangerouslySetInnerHTML={{__html: translation.contentHtml}} />
+      <section className="prose-essay" dangerouslySetInnerHTML={{__html: renderedContentHtml}} />
 
       <section className="mt-16">
         <h2 className="mb-5 text-5xl">{t("related")}</h2>

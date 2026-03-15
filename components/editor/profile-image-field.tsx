@@ -4,6 +4,7 @@ import {ImageUp, Trash2} from "lucide-react";
 import Image from "next/image";
 import {useEffect, useMemo, useRef, useState} from "react";
 import {Button} from "@/components/ui/button";
+import {toMediaPath} from "@/lib/media";
 
 type ProfileImageFieldProps = {
   defaultValue?: string;
@@ -108,7 +109,7 @@ export function ProfileImageField({
   label = "Profilbild",
   inputName = "profileImage",
 }: ProfileImageFieldProps) {
-  const [imagePath, setImagePath] = useState(defaultValue);
+  const [imagePath, setImagePath] = useState(toMediaPath(defaultValue));
   const [uploading, setUploading] = useState(false);
   const [cropSession, setCropSession] = useState<CropSession | null>(null);
   const [zoom, setZoom] = useState(1);
@@ -212,7 +213,7 @@ export function ProfileImageField({
         throw new Error("Upload-Antwort war ungültig.");
       }
 
-      setImagePath(path);
+      setImagePath(toMediaPath(path));
       closeCropper();
     } catch (error) {
       setCropError(error instanceof Error ? error.message : "Bild konnte nicht hochgeladen werden.");
@@ -267,7 +268,7 @@ export function ProfileImageField({
             alt="Profilbild"
             className="h-40 w-40 rounded-xl object-cover"
             height={160}
-            src={imagePath}
+            src={toMediaPath(imagePath)}
             unoptimized
             width={160}
           />

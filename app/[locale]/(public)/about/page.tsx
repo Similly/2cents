@@ -1,6 +1,7 @@
 import {notFound} from "next/navigation";
 import Image from "next/image";
 import {getSiteSettings} from "@/lib/data";
+import {toMediaPath} from "@/lib/media";
 import {Separator} from "@/components/ui/separator";
 
 export const dynamic = "force-dynamic";
@@ -15,18 +16,19 @@ export default async function AboutPage({params}: {params: Promise<{locale: stri
   const socialLinksRaw = (settings.socialLinks as Record<string, unknown> | null) ?? null;
   const profileImage =
     typeof socialLinksRaw?.profileImage === "string" ? socialLinksRaw.profileImage.trim() : "";
+  const profileImageSrc = toMediaPath(profileImage);
 
   return (
     <article className="mx-auto max-w-[720px] pb-16">
       <h1 className="text-7xl leading-none">{settings.aboutTitle}</h1>
 
-      {profileImage && profileImage.startsWith("/") ? (
+      {profileImageSrc && profileImageSrc.startsWith("/") ? (
         <div className="mt-10 inline-flex rounded-3xl border border-site-border bg-site-panel p-3">
           <Image
             alt={settings.siteName}
             className="h-40 w-40 rounded-2xl object-cover"
             height={160}
-            src={profileImage}
+            src={profileImageSrc}
             unoptimized
             width={160}
           />

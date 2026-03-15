@@ -1,5 +1,6 @@
 import {marked} from "marked";
 import sanitizeHtml from "sanitize-html";
+import {toMediaPath} from "@/lib/media";
 
 marked.setOptions({
   gfm: true,
@@ -48,6 +49,7 @@ const sanitizeConfig: sanitizeHtml.IOptions = {
       tagName,
       attribs: {
         ...attribs,
+        src: toMediaPath(attribs.src),
         loading: "lazy",
       },
     }),

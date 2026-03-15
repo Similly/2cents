@@ -1,6 +1,7 @@
 import {mkdir, writeFile} from "node:fs/promises";
 import path from "node:path";
 import {randomUUID} from "node:crypto";
+import {toMediaPath} from "@/lib/media";
 
 const ALLOWED_MIME = ["image/jpeg", "image/png", "image/webp", "image/gif"];
 const MAX_SIZE = 5 * 1024 * 1024;
@@ -26,7 +27,7 @@ export async function storeUpload(file: File) {
 
   return {
     filename: fileName,
-    path: `/uploads/${fileName}`,
+    path: toMediaPath(`/uploads/${fileName}`),
     sizeBytes: file.size,
     mimeType: file.type,
   };
