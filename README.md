@@ -73,6 +73,7 @@ Important variables:
 - `POSTGRES_HOST_PORT`: host port for Docker Postgres (`5434`)
 - `UPLOAD_DIR`: upload path for host dev (`public/uploads`)
 - `DOCKER_UPLOAD_DIR`: upload path inside Docker app (`/app/public/uploads`)
+- `PROXY_DOCKER_NETWORK`: external Docker network for your reverse proxy (`proxy_default`)
 - `NEXTAUTH_SECRET`: long random secret
 - `NEXTAUTH_URL`: public app URL
 - `APP_BASE_URL`: canonical URL used for sitemap/rss/metadata
@@ -92,6 +93,12 @@ npm install
 
 ```bash
 docker compose up -d postgres
+```
+
+If `proxy_default` does not exist in your Docker environment, create it once:
+
+```bash
+docker network create proxy_default
 ```
 
 3. Run migrations + seed
@@ -140,6 +147,14 @@ This starts:
 ```bash
 docker compose exec app npm run db:seed
 ```
+
+If the external proxy network does not exist yet, create it once:
+
+```bash
+docker network create proxy_default
+```
+
+If your network name differs, set `PROXY_DOCKER_NETWORK` in `.env`.
 
 ## Media Upload Persistence
 

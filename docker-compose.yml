@@ -29,6 +29,9 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+    networks:
+      - default
+      - proxy
     volumes:
       - uploads_data:/app/public/uploads
 
@@ -52,3 +55,8 @@ volumes:
   uploads_data:
   caddy_data:
   caddy_config:
+
+networks:
+  proxy:
+    external: true
+    name: ${PROXY_DOCKER_NETWORK:-proxy_default}
