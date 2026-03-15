@@ -1,26 +1,100 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg: #f7f7f7;
+  --panel: #f9f9f9;
+  --border: #e5e5e5;
+  --muted: #6f6b67;
+  --ink: #252220;
+  --accent: #116d71;
+  --pill: #f0f0f0;
+  --featured: #f9ece6;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-site: var(--bg);
+  --color-site-panel: var(--panel);
+  --color-site-border: var(--border);
+  --color-site-muted: var(--muted);
+  --color-site-ink: var(--ink);
+  --color-site-accent: var(--accent);
+  --color-site-pill: var(--pill);
+  --color-site-featured: var(--featured);
+  --font-sans: var(--font-sans);
+  --font-serif: var(--font-serif);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  border-color: var(--border);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-serif), serif;
+  letter-spacing: -0.015em;
+}
+
+.prose-essay {
+  color: var(--ink);
+  max-width: none;
+}
+
+.prose-essay h1,
+.prose-essay h2,
+.prose-essay h3,
+.prose-essay h4 {
+  font-family: var(--font-serif), serif;
+  margin-top: 1.7em;
+  margin-bottom: 0.6em;
+  line-height: 1.2;
+}
+
+.prose-essay p,
+.prose-essay li,
+.prose-essay blockquote {
+  color: #3a3633;
+  font-size: 1.17rem;
+  line-height: 1.9;
+}
+
+.prose-essay a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.prose-essay blockquote {
+  border-left: 3px solid var(--border);
+  padding-left: 1rem;
+  font-style: italic;
+}
+
+.prose-essay pre {
+  background: #171717;
+  color: #f1f1f1;
+  border-radius: 12px;
+  padding: 1rem;
+  overflow: auto;
+  font-size: 0.9rem;
+}
+
+.prose-essay table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+}
+
+.prose-essay th,
+.prose-essay td {
+  border: 1px solid var(--border);
+  text-align: left;
+  padding: 0.7rem;
 }

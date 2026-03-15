@@ -1,0 +1,74 @@
+{
+  "site": {
+    "name": "2cents",
+    "tagline": "Essays & reflections"
+  },
+  "nav": {
+    "home": "Home",
+    "archive": "Archiv",
+    "about": "About",
+    "write": "Schreiben",
+    "searchPlaceholder": "Essays suchen..."
+  },
+  "home": {
+    "intro": "Eine persönliche Sammlung von Essays über modernes Leben, Kreativität und die Kunst, aufmerksam zu bleiben.",
+    "featured": "Featured",
+    "recent": "Neue Essays",
+    "viewAll": "Alle ansehen"
+  },
+  "archive": {
+    "title": "Archiv",
+    "description": "Alle Essays, organisiert und durchsuchbar. Entdecke nach Kategorie, Tag oder Suchbegriff.",
+    "filterByCategory": "Nach Kategorie filtern",
+    "popularTags": "Beliebte Tags",
+    "search": "Im Archiv suchen...",
+    "empty": "Keine Essays für diese Filter gefunden."
+  },
+  "about": {
+    "title": "About"
+  },
+  "post": {
+    "minRead": "Min Lesezeit",
+    "related": "Verwandte Essays",
+    "copyLink": "Link kopieren",
+    "toc": "Inhalt"
+  },
+  "editor": {
+    "title": "Editor",
+    "overview": "Beiträge",
+    "new": "Neuer Essay",
+    "draft": "Entwurf",
+    "published": "Veröffentlicht",
+    "saveDraft": "Entwurf speichern",
+    "publish": "Veröffentlichen",
+    "saved": "Gespeichert",
+    "saving": "Speichert...",
+    "write": "Write",
+    "preview": "Preview",
+    "split": "Split View",
+    "slug": "URL Slug",
+    "category": "Kategorie",
+    "tags": "Tags (kommagetrennt)",
+    "cover": "Cover Bild",
+    "upload": "Klicken zum Hochladen oder Datei hier ablegen",
+    "excerpt": "Kurzbeschreibung",
+    "excerptPlaceholder": "Schreibe eine kurze Zusammenfassung...",
+    "titlePlaceholder": "Essay Titel...",
+    "emptyPreview": "Deine Vorschau erscheint hier",
+    "noPosts": "Noch keine Beiträge vorhanden."
+  },
+  "login": {
+    "title": "Admin Login",
+    "description": "Melde dich an, um Essays zu schreiben und zu veröffentlichen.",
+    "email": "E-Mail",
+    "password": "Passwort",
+    "submit": "Anmelden",
+    "error": "Login fehlgeschlagen. Bitte prüfe deine Daten."
+  },
+  "footer": {
+    "copyright": "© 2026 2cents. Ein persönlicher Essay-Blog.",
+    "rss": "RSS",
+    "twitter": "Twitter",
+    "email": "Email"
+  }
+}

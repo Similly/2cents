@@ -1,0 +1,12 @@
+{
+  email {$CADDY_EMAIL}
+}
+
+{$APP_DOMAIN} {
+  encode gzip zstd
+
+  @uploads path /uploads/*
+  header @uploads Cache-Control "public, max-age=604800, immutable"
+
+  reverse_proxy app:3000
+}

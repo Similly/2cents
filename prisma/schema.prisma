@@ -1,0 +1,157 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+}
+
+enum PostStatus {
+  DRAFT
+  PUBLISHED
+}
+
+model User {
+  id           String    @id @default(cuid())
+  email        String    @unique
+  name         String
+  passwordHash String
+  role         Role      @default(ADMIN)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  accounts     Account[]
+  sessions     Session[]
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Post {
+  id          String            @id @default(cuid())
+  status      PostStatus        @default(DRAFT)
+  featured    Boolean           @default(false)
+  coverImage  String?
+  coverAlt    String?
+  publishedAt DateTime?
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+  categoryId  String?
+
+  category     Category?         @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  translations PostTranslation[]
+  tags         PostTag[]
+}
+
+model PostTranslation {
+  id             String   @id @default(cuid())
+  postId         String
+  locale         String
+  title          String
+  slug           String
+  excerpt        String
+  contentJson    Json
+  contentHtml    String   @db.Text
+  seoTitle       String?
+  seoDescription String?
+  readingTimeMin Int      @default(1)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, locale])
+  @@unique([locale, slug])
+  @@index([locale])
+}
+
+model Category {
+  id        String   @id @default(cuid())
+  name      String
+  slug      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  posts     Post[]
+}
+
+model Tag {
+  id        String    @id @default(cuid())
+  name      String
+  slug      String    @unique
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  posts     PostTag[]
+}
+
+model PostTag {
+  postId String
+  tagId  String
+
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+  tag  Tag  @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([postId, tagId])
+}
+
+model MediaAsset {
+  id        String   @id @default(cuid())
+  filename  String
+  path      String
+  mimeType  String
+  sizeBytes Int
+  alt       String?
+  createdAt DateTime @default(now())
+}
+
+model SiteSettings {
+  id               String   @id @default(cuid())
+  locale           String   @unique
+  siteName         String
+  tagline          String
+  aboutTitle       String
+  aboutIntro       String
+  aboutBody        String
+  aboutTopics      Json
+  aboutWhyTitle    String
+  aboutWhyBody     String
+  socialLinks      Json
+  updatedAt        DateTime @updatedAt
+  createdAt        DateTime @default(now())
+}

@@ -1,36 +1,154 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 2cents
 
-## Getting Started
+Production-ready personal essay blog built with Next.js, Prisma, PostgreSQL, TipTap, next-intl, Auth.js, Docker, and Caddy.
 
-First, run the development server:
+## Stack
+
+- Next.js (App Router) + TypeScript
+- Tailwind CSS + reusable shadcn-style UI primitives
+- Prisma + PostgreSQL
+- TipTap rich text editor
+- next-intl (default locale `de`, `en` ready)
+- Auth.js credentials login (single admin)
+- Zod validation
+- Docker multi-stage image + docker-compose
+- Caddy reverse proxy with automatic TLS
+
+## Features
+
+- Public pages
+  - `/` home with featured + recent essays
+  - `/archiv` with search, category and tag filtering
+  - `/about` seeded editable profile/content
+  - `/essay/[slug]` long-form reading layout, metadata, related essays
+- Admin/editor
+  - `/login` secure credentials login
+  - `/editor` draft/published overview
+  - `/editor/posts/[id]` TipTap writing studio with toolbar, preview/split mode, autosave indicator, save draft/publish, cover image upload
+- SEO/distribution
+  - Dynamic metadata + Open Graph
+  - `sitemap.xml`
+  - `robots.txt`
+  - `rss.xml`
+- Bilingual-ready architecture
+  - Locale-aware routes via `next-intl`
+  - `Post` + `PostTranslation` split model
+  - German-first content, English optional
+
+## Project Structure
+
+```txt
+app/
+  [locale]/
+    (public)/
+    (auth)/login/
+    (editor)/editor/
+  api/
+  rss.xml/
+components/
+  public/
+  editor/
+  ui/
+lib/
+i18n/
+messages/
+prisma/
+  schema.prisma
+  migrations/
+  seed.ts
+```
+
+## Environment
+
+Copy `.env.example` to `.env` and adjust values.
+
+```bash
+cp .env.example .env
+```
+
+Important variables:
+
+- `DATABASE_URL`: Postgres connection string
+- `NEXTAUTH_SECRET`: long random secret
+- `NEXTAUTH_URL`: public app URL
+- `APP_BASE_URL`: canonical URL used for sitemap/rss/metadata
+- `APP_DOMAIN`: domain used by Caddy
+- `CADDY_EMAIL`: email for TLS cert management
+- `ADMIN_EMAIL` and `ADMIN_PASSWORD`: seeded first admin credentials
+
+## Local Development
+
+1. Install dependencies
+
+```bash
+npm install
+```
+
+2. Run database (Docker)
+
+```bash
+docker compose up -d postgres
+```
+
+3. Run migrations + seed
+
+```bash
+npx prisma migrate deploy
+npm run db:seed
+```
+
+4. Start app
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Production VPS Deployment (Ubuntu, Docker + Caddy)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. Install Docker + Compose plugin on VPS.
+2. Clone this repo.
+3. Create `.env` from template and set production values.
+4. Start stack:
 
-## Learn More
+```bash
+docker compose up -d --build
+```
 
-To learn more about Next.js, take a look at the following resources:
+This starts:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- `postgres` (persistent volume: `postgres_data`)
+- `app` (Next.js production container)
+- `caddy` (TLS termination + reverse proxy)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+5. Run seed once (optional but recommended):
 
-## Deploy on Vercel
+```bash
+docker compose exec app npm run db:seed
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Media Upload Persistence
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Uploads are stored in `/app/public/uploads` in the container, mapped to Docker volume `uploads_data`.
+
+## Database Model Notes
+
+- `Post` stores shared metadata (status, cover, featured, publish date)
+- `PostTranslation` stores locale-specific fields (`title`, `slug`, `excerpt`, `contentJson`, `contentHtml`, SEO fields)
+- `Tag`, `Category`, and pivot `PostTag`
+- `SiteSettings` locale-aware profile/about content
+- Auth.js tables + `User` with admin role
+
+## Prisma Commands
+
+- Generate client: `npm run prisma:generate`
+- Apply migrations: `npm run prisma:migrate`
+- Seed sample data: `npm run db:seed`
+- Studio: `npm run db:studio`
+
+## Notes
+
+- Default active locale is German (`de`) with architecture ready for English (`en`).
+- Content rendering uses stored TipTap HTML for performance.
+- Upload flow is local filesystem first; easy to replace with S3-compatible storage in `lib/uploads.ts`.

@@ -1,0 +1,74 @@
+{
+  "site": {
+    "name": "2cents",
+    "tagline": "Essays & reflections"
+  },
+  "nav": {
+    "home": "Home",
+    "archive": "Archive",
+    "about": "About",
+    "write": "Write",
+    "searchPlaceholder": "Search essays..."
+  },
+  "home": {
+    "intro": "A personal collection of essays exploring modern life, creativity, and the art of paying attention.",
+    "featured": "Featured",
+    "recent": "Recent Essays",
+    "viewAll": "View all"
+  },
+  "archive": {
+    "title": "Archive",
+    "description": "All essays, organized and searchable. Browse by category, tag, or query.",
+    "filterByCategory": "Filter by category",
+    "popularTags": "Popular tags",
+    "search": "Search archive...",
+    "empty": "No essays found for this filter."
+  },
+  "about": {
+    "title": "About"
+  },
+  "post": {
+    "minRead": "min read",
+    "related": "Related essays",
+    "copyLink": "Copy link",
+    "toc": "Contents"
+  },
+  "editor": {
+    "title": "Editor",
+    "overview": "Posts",
+    "new": "New Essay",
+    "draft": "Draft",
+    "published": "Published",
+    "saveDraft": "Save Draft",
+    "publish": "Publish",
+    "saved": "Saved",
+    "saving": "Saving...",
+    "write": "Write",
+    "preview": "Preview",
+    "split": "Split View",
+    "slug": "URL Slug",
+    "category": "Category",
+    "tags": "Tags (comma-separated)",
+    "cover": "Cover Image",
+    "upload": "Click to upload or drag and drop",
+    "excerpt": "Excerpt",
+    "excerptPlaceholder": "Write a short summary...",
+    "titlePlaceholder": "Essay title...",
+    "emptyPreview": "Your preview will appear here",
+    "noPosts": "No posts yet."
+  },
+  "login": {
+    "title": "Admin Login",
+    "description": "Sign in to write and publish essays.",
+    "email": "Email",
+    "password": "Password",
+    "submit": "Sign in",
+    "error": "Login failed. Please check your credentials."
+  },
+  "footer": {
+    "copyright": "© 2026 2cents. A personal essay blog.",
+    "rss": "RSS",
+    "twitter": "Twitter",
+    "email": "Email"
+  }
+}
