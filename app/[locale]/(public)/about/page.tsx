@@ -27,6 +27,7 @@ export default async function AboutPage({params}: {params: Promise<{locale: stri
             className="h-40 w-40 rounded-2xl object-cover"
             height={160}
             src={profileImage}
+            unoptimized
             width={160}
           />
         </div>

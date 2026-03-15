@@ -498,6 +498,7 @@ export function PostEditor({id, locale, initial, categories}: PostEditorProps) {
                     className="max-h-48 rounded object-cover"
                     height={320}
                     src={coverImage}
+                    unoptimized
                     width={900}
                   />
                   <div className="mt-2 grid gap-2 md:grid-cols-[1fr_auto]">

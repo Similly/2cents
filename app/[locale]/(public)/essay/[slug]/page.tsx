@@ -89,6 +89,7 @@ export default async function EssayPage({
               height={720}
               priority
               src={translation.post.coverImage}
+              unoptimized
               width={1280}
             />
           </div>

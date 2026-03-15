@@ -268,6 +268,7 @@ export function ProfileImageField({
             className="h-40 w-40 rounded-xl object-cover"
             height={160}
             src={imagePath}
+            unoptimized
             width={160}
           />
           <div className="mt-3 flex gap-2">
