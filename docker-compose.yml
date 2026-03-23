@@ -6,8 +6,6 @@ services:
       POSTGRES_DB: twocents
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-    ports:
-      - "${POSTGRES_HOST_PORT:-5433}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -35,26 +33,10 @@ services:
     volumes:
       - uploads_data:/app/public/uploads
 
-  caddy:
-    image: caddy:2.9-alpine
-    restart: unless-stopped
-    depends_on:
-      - app
-    env_file:
-      - .env
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile:ro
-      - caddy_data:/data
-      - caddy_config:/config
 
 volumes:
   postgres_data:
   uploads_data:
-  caddy_data:
-  caddy_config:
 
 networks:
   proxy:
